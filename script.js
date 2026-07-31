@@ -20,26 +20,26 @@ const mouse = {
     y: height / 2
 };
 
-window.addEventListener("mousemove", (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
+window.addEventListener("mousemove", (event) => {
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
 });
 
-window.addEventListener("touchmove", (e) => {
-    if (e.touches.length > 0) {
-        mouse.x = e.touches[0].clientX;
-        mouse.y = e.touches[0].clientY;
+window.addEventListener("touchmove", (event) => {
+    if (event.touches.length > 0) {
+        mouse.x = event.touches[0].clientX;
+        mouse.y = event.touches[0].clientY;
     }
 }, { passive: true });
 
 // Click effect: Circular energy pulse
 let clickPulses = [];
-window.addEventListener("mousedown", (e) => {
-    clickPulses.push({ x: e.clientX, y: e.clientY, radius: 0, alpha: 1.0 });
+window.addEventListener("mousedown", (event) => {
+    clickPulses.push({ x: event.clientX, y: event.clientY, radius: 0, alpha: 1.0 });
 });
-window.addEventListener("touchstart", (e) => {
-    if (e.touches.length > 0) {
-        clickPulses.push({ x: e.touches[0].clientX, y: e.touches[0].clientY, radius: 0, alpha: 1.0 });
+window.addEventListener("touchstart", (event) => {
+    if (event.touches.length > 0) {
+        clickPulses.push({ x: event.touches[0].clientX, y: event.touches[0].clientY, radius: 0, alpha: 1.0 });
     }
 }, { passive: true });
 
@@ -76,11 +76,11 @@ window.addEventListener("resize", () => {
 let frame = 0;
 function drawSpaceBackground() {
     // Dark space gradient
-    let grad = ctx.createLinearGradient(0, 0, 0, height);
-    grad.addColorStop(0, "#01010a");
-    grad.addColorStop(0.5, "#0b041c");
-    grad.addColorStop(1, "#180636");
-    ctx.fillStyle = grad;
+    let spaceGradient = ctx.createLinearGradient(0, 0, 0, height);
+    spaceGradient.addColorStop(0, "#01010a");
+    spaceGradient.addColorStop(0.5, "#0b041c");
+    spaceGradient.addColorStop(1, "#180636");
+    ctx.fillStyle = spaceGradient;
     ctx.fillRect(0, 0, width, height);
 
     // Stars twinkling
@@ -113,17 +113,17 @@ class Rocket {
     }
 
     update(targetX, targetY) {
-        let d = dist(this.x, this.y, targetX, targetY);
+        let distanceToTarget = dist(this.x, this.y, targetX, targetY);
         let targetAngle = angleBetween(this.x, this.y, targetX, targetY);
 
-        if (d > 5) {
+        if (distanceToTarget > 5) {
             // Smooth rotation calculation
-            let diff = targetAngle - this.angle;
-            diff = Math.atan2(Math.sin(diff), Math.cos(diff));
-            this.angle += diff * 0.15;
+            let angleDifference = targetAngle - this.angle;
+            angleDifference = Math.atan2(Math.sin(angleDifference), Math.cos(angleDifference));
+            this.angle += angleDifference * 0.15;
 
             // Speed easing towards max based on distance
-            this.speed = Math.min(this.maxSpeed, d * 0.1);
+            this.speed = Math.min(this.maxSpeed, distanceToTarget * 0.1);
             this.x += Math.cos(this.angle) * this.speed;
             this.y += Math.sin(this.angle) * this.speed;
         } else {
@@ -173,13 +173,13 @@ class Rocket {
             ctx.lineTo(-this.length / 2 - flameLength, 0);
             ctx.lineTo(-this.length / 2 + 2, 5);
             
-            let flameGrad = ctx.createLinearGradient(-this.length / 2, 0, -this.length / 2 - flameLength, 0);
-            flameGrad.addColorStop(0, "#ffffff");
-            flameGrad.addColorStop(0.2, "#ffff00");
-            flameGrad.addColorStop(0.6, "#ff6600");
-            flameGrad.addColorStop(1, "rgba(255, 0, 0, 0)");
+            let flameGradient = ctx.createLinearGradient(-this.length / 2, 0, -this.length / 2 - flameLength, 0);
+            flameGradient.addColorStop(0, "#ffffff");
+            flameGradient.addColorStop(0.2, "#ffff00");
+            flameGradient.addColorStop(0.6, "#ff6600");
+            flameGradient.addColorStop(1, "rgba(255, 0, 0, 0)");
             
-            ctx.fillStyle = flameGrad;
+            ctx.fillStyle = flameGradient;
             ctx.shadowBlur = 15;
             ctx.shadowColor = "#ff6600";
             ctx.fill();
@@ -209,11 +209,11 @@ class Rocket {
         ctx.fill();
 
         // Main Body (gradient shading)
-        let bodyGrad = ctx.createLinearGradient(0, -this.width / 2, 0, this.width / 2);
-        bodyGrad.addColorStop(0, "#ffffff");
-        bodyGrad.addColorStop(1, "#b0bec5");
+        let bodyGradient = ctx.createLinearGradient(0, -this.width / 2, 0, this.width / 2);
+        bodyGradient.addColorStop(0, "#ffffff");
+        bodyGradient.addColorStop(1, "#b0bec5");
         
-        ctx.fillStyle = bodyGrad;
+        ctx.fillStyle = bodyGradient;
         ctx.beginPath();
         ctx.moveTo(this.length / 2, 0); // Nose cone tip
         ctx.quadraticCurveTo(this.length / 4, -this.width / 2, -this.length / 2, -this.width / 2);
@@ -258,18 +258,18 @@ function updateAndDrawParticles() {
         ctx.beginPath();
         ctx.moveTo(trail[0].x, trail[0].y);
         for (let i = 1; i < trail.length; i++) {
-            let xc = (trail[i].x + trail[i - 1].x) / 2;
-            let yc = (trail[i].y + trail[i - 1].y) / 2;
-            ctx.quadraticCurveTo(trail[i - 1].x, trail[i - 1].y, xc, yc);
+            let controlPointX = (trail[i].x + trail[i - 1].x) / 2;
+            let controlPointY = (trail[i].y + trail[i - 1].y) / 2;
+            ctx.quadraticCurveTo(trail[i - 1].x, trail[i - 1].y, controlPointX, controlPointY);
         }
         ctx.lineTo(trail[trail.length - 1].x, trail[trail.length - 1].y);
         
         // Fade line transparency
-        let trailGrad = ctx.createLinearGradient(trail[0].x, trail[0].y, trail[trail.length-1].x, trail[trail.length-1].y);
-        trailGrad.addColorStop(0, `rgba(0, 229, 255, 0)`);
-        trailGrad.addColorStop(1, `rgba(0, 229, 255, 0.8)`);
+        let trailGradient = ctx.createLinearGradient(trail[0].x, trail[0].y, trail[trail.length-1].x, trail[trail.length-1].y);
+        trailGradient.addColorStop(0, `rgba(0, 229, 255, 0)`);
+        trailGradient.addColorStop(1, `rgba(0, 229, 255, 0.8)`);
         
-        ctx.strokeStyle = trailGrad;
+        ctx.strokeStyle = trailGradient;
         ctx.lineWidth = 3;
         ctx.stroke();
         ctx.restore();
@@ -286,18 +286,18 @@ function updateAndDrawParticles() {
     // 2. Smoke Particles
     ctx.globalCompositeOperation = "lighter";
     for (let i = particles.length - 1; i >= 0; i--) {
-        let p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.size += 0.15; // Expansion
-        p.life -= p.decay; // Fading
+        let particle = particles[i];
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.size += 0.15; // Expansion
+        particle.life -= particle.decay; // Fading
         
-        if (p.life <= 0) {
+        if (particle.life <= 0) {
             particles.splice(i, 1);
         } else {
-            ctx.fillStyle = `rgba(100, 100, 120, ${p.life * 0.4})`;
+            ctx.fillStyle = `rgba(100, 100, 120, ${particle.life * 0.4})`;
             ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
             ctx.fill();
         }
     }
@@ -305,20 +305,20 @@ function updateAndDrawParticles() {
 
     // 3. Click Energy Pulses
     for (let i = clickPulses.length - 1; i >= 0; i--) {
-        let cp = clickPulses[i];
-        cp.radius += 3;
-        cp.alpha -= 0.04;
+        let clickPulse = clickPulses[i];
+        clickPulse.radius += 3;
+        clickPulse.alpha -= 0.04;
         
-        if (cp.alpha <= 0) {
+        if (clickPulse.alpha <= 0) {
             clickPulses.splice(i, 1);
         } else {
             ctx.save();
-            ctx.strokeStyle = `rgba(0, 229, 255, ${cp.alpha})`; // Cyan ring
-            ctx.lineWidth = 2 + (cp.alpha * 3);
+            ctx.strokeStyle = `rgba(0, 229, 255, ${clickPulse.alpha})`; // Cyan ring
+            ctx.lineWidth = 2 + (clickPulse.alpha * 3);
             ctx.shadowBlur = 10;
             ctx.shadowColor = "#00e5ff";
             ctx.beginPath();
-            ctx.arc(cp.x, cp.y, cp.radius, 0, Math.PI * 2);
+            ctx.arc(clickPulse.x, clickPulse.y, clickPulse.radius, 0, Math.PI * 2);
             ctx.stroke();
             ctx.restore();
         }
