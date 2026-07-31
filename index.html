@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NovaRocket - Interactive Rocket Cursor Animation using HTML5 Canvas</title>
+    <meta name="description" content="A beautiful interactive Rocket Cursor animation built with HTML5 Canvas and Vanilla JavaScript.">
+    <meta name="keywords" content="NovaRocket, Rocket Cursor, Interactive Animation, HTML5 Canvas, Vanilla JavaScript">
+    <meta property="og:title" content="NovaRocket - Interactive Rocket Cursor Animation">
+    <meta property="og:description" content="A beautiful interactive Rocket Cursor animation built with HTML5 Canvas and Vanilla JavaScript.">
+    <meta property="og:type" content="website">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" title="NovaRocket Favicon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000000;
+            user-select: none;
+            touch-action: none;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        /* Hidden heading for SEO and structure */
+        h1.visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="visually-hidden">NovaRocket - Interactive Rocket Cursor Animation</h1>
+    <canvas id="canvas"></canvas>
+    <script src="script.js"></script>
+</body>
+</html>
