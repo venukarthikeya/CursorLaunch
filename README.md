@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>🚀 CursorLaunch</h1>
+  <h1>CursorLaunch</h1>
   <p><strong>A beautiful, high-performance interactive Rocket Cursor animation built with HTML5 Canvas and Vanilla JavaScript.</strong></p>
   
   <p>
@@ -34,6 +34,34 @@ To view it locally, you can first clone the repository using `git clone https://
 The project file structure is intentionally minimalist. At its root, `index.html` governs the main application structure, `style.css` handles basic page styling alongside zero-margin element resets, and the entirety of the visual logic resides within `script.js`. 
 
 Under the hood, the JavaScript engine heavily leverages the powerful HTML5 Canvas API in synchronization with the browser's native `requestAnimationFrame()` loop to quickly recalculate and paint objects 60 times a second. By using smart math abstractions like `Math.atan2`, the engine processes natural vector rotations and directionality flawlessly. We ensure extended high-performance by bypassing DOM-heavy lifecycles, and our built-in memory management dynamically garbage collects dead particle objects to entirely prevent memory leaks during long browsing sessions.
+
+### Core Movement Logic (script.js excerpt)
+Here is a small snippet showcasing how the rocket mathematically tracks calculating fluid easing and continuous re-alignment with HTML5 math:
+
+```javascript
+update(targetX, targetY) {
+    let d = dist(this.x, this.y, targetX, targetY);
+    let targetAngle = angleBetween(this.x, this.y, targetX, targetY);
+
+    if (d > 5) {
+        // Find the shortest rotational path
+        let diff = targetAngle - this.angle;
+        diff = Math.atan2(Math.sin(diff), Math.cos(diff));
+        
+        // Smoothly interpolate the angle
+        this.angle += diff * 0.15; 
+
+        // Ease speed based on proximity to the cursor
+        this.speed = Math.min(this.maxSpeed, d * 0.1);
+        
+        // Update literal coordinates
+        this.x += Math.cos(this.angle) * this.speed;
+        this.y += Math.sin(this.angle) * this.speed;
+    } else {
+        this.speed *= 0.8; // Decelerate smoothly
+    }
+}
+```
 
 ---
 
